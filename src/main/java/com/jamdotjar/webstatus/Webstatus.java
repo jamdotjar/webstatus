@@ -26,6 +26,8 @@ public class Webstatus implements ModInitializer {
 		int port = 8080;
 		WEBSTATUS_SERVER = new WebServer(port);
 		WEBSTATUS_SERVER.start();
+
+		LOGGER.info("WebServer started on port {}", port);
 	}
 
 	public static Identifier id(String path) {
