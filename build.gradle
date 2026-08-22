@@ -35,6 +35,10 @@ dependencies {
 
 	//Undertow
 	implementation "io.undertow:undertow-core:2.4.0.Final"
+
+	//Jackson
+	implementation "com.fasterxml.jackson.core:jackson-core:2.19.0"
+	implementation "com.fasterxml.jackson.core:jackson-databind:2.19.0"
 }
 
 processResources {

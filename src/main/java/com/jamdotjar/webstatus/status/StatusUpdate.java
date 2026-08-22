@@ -5,5 +5,12 @@ import java.util.List;
 public record StatusUpdate(
         String motd,
         int onlinePlayers,
-        List<String> players
-) {}
+        List<PlayerInfo> players
+) {
+    public record PlayerInfo(
+            String name,
+            Float hp,
+            String dimension,
+            String gameMode
+    ){}
+}

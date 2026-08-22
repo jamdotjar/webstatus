@@ -1,5 +1,6 @@
 package com.jamdotjar.webstatus;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamdotjar.webstatus.status.StatusService;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 public class WebServer {
     private Undertow server;
     private final int port;
+    private StatusService statusService;
 
     public WebServer(int port) {this.port = port;}
 
@@ -31,10 +33,11 @@ public class WebServer {
         }
     }
 
-    public void start() {
+    public void start(StatusService statusService) {
+        this.statusService = statusService;
         pageData = readResource("web/index.html");
         server = Undertow.builder()
-                .addHttpListener(port,  "localhost")
+                .addHttpListener(port, "localhost")
                 .setHandler(buildHandlers()).build();
         server.start();
     }
@@ -49,9 +52,7 @@ public class WebServer {
             public void handleRequest(HttpServerExchange exchange) throws Exception {
                 if (exchange.getRelativePath().equals("/api/status")){
                     exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "application/json");
-                    exchange.getResponseSender().send("""
-                            {"motd": "Imagine this is a JSON response"}
-                            """);
+                    exchange.getResponseSender().send(statusService.updateJson());
                     return;
                 }
 

@@ -1,7 +1,9 @@
 package com.jamdotjar.webstatus;
 
+import com.jamdotjar.webstatus.status.StatusService;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.resources.Identifier;
 
 import org.slf4j.Logger;
@@ -14,7 +16,8 @@ public class Webstatus implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	private WebServer WEBSTATUS_SERVER;
+	private static WebServer WEBSTATUS_SERVER;
+	private static StatusService STATUS_SERVICE;
 
 	@Override
 	public void onInitialize() {
@@ -23,11 +26,18 @@ public class Webstatus implements ModInitializer {
 		// Proceed with mild caution.
 		LOGGER.info("{} initialized", MOD_ID);
 
-		int port = 8080;
-		WEBSTATUS_SERVER = new WebServer(port);
-		WEBSTATUS_SERVER.start();
+		STATUS_SERVICE = new StatusService();
 
-		LOGGER.info("WebServer started on port {}", port);
+		int port = 8080;
+
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+			STATUS_SERVICE.setServer(server);
+			WEBSTATUS_SERVER = new WebServer(port);
+			WEBSTATUS_SERVER.start(STATUS_SERVICE);
+
+			LOGGER.info("WebServer started on port {}", port);
+		});
+
 	}
 
 	public static Identifier id(String path) {
