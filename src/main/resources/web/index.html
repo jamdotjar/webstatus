@@ -10,10 +10,14 @@
 <script>
     async function update() {
         const status = await fetch("/api/status");
-        document.getElementById("json").textContent = JSON.stringify(await status.json(), null, 2);
+        var json = await status.json();
+
         setTimeout(update, 5000);
-    }
     update();
+
+    function parsejson(json) {}
+
+
 </script>
 </body>
 </html>
